@@ -1,0 +1,10 @@
+asgiref
+Django
+django-environ
+django-filter
+djangorestframework
+Markdown
+pillow
+psycopg2-binary
+sqlparse
+tzdata

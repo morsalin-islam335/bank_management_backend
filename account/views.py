@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-# from .serializers import AccountSerializer, AddressSerializer
+from .serializers import AccountSerializer, AddressSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
@@ -9,9 +9,10 @@ from rest_framework.views import APIView
 ############# Import necessary models #########
 from .models import UserBankAccount, UserAddress
 from django.contrib.auth.models import User
+from rest_framework.authtoken.views import ObtainAuthToken
 
 
-from . serializers import UserRegistrationSerializer, UserLoginSerializer
+from . serializers import  UserLoginSerializer
 
 ####################### Generate Secure Token For User Registration ##################
 from django.contrib.auth.tokens import default_token_generator
@@ -28,32 +29,52 @@ from django.contrib.auth import login, logout, authenticate
 from rest_framework.authtoken.models import Token
 
 
-class UserRegistrationApiView(APIView):
-    serializer_class = UserRegistrationSerializer
+# class UserRegistrationApiView(APIView):
+#     serializer_class = UserRegistrationSerializer
     
-    def post(self, request):
-        serializer = UserRegistrationSerializer(data=request.data)
+#     def post(self, request):
+#         serializer = UserRegistrationSerializer(data=request.data)
         
+#         if serializer.is_valid():
+#             serializer.save()
+#             # user = serializer.save()
+#             # print(user)
+#             # token = default_token_generator.make_token(user)
+#             # print("token ", token)
+#             # uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             # print("uid ", uid)
+#             # # confirm_link = f"https://smart-care.onrender.com/patient/active/{uid}/{token}"
+#             # confirm_link = f"http://127.0.0.1:8000/account/active/{uid}/{token}"
+#             # email_subject = "Confirm Your Email"
+#             # email_body = render_to_string('confirmation_email.html', {'confirm_link' : confirm_link})
+            
+#             # email = EmailMultiAlternatives(email_subject , '', to=[user.email])
+#             # email.attach_alternative(email_body, "text/html")
+#             # email.send()
+#             # return Response("Check your mail for confirmation")
+#         return Response(serializer.errors)
+
+
+class UserAccountCreateSerializer(APIView):
+    serializer_class = AccountSerializer
+
+    def post(self, request):
+        serializer = AccountSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save()
-            # user = serializer.save()
-            # print(user)
-            # token = default_token_generator.make_token(user)
-            # print("token ", token)
-            # uid = urlsafe_base64_encode(force_bytes(user.pk))
-            # print("uid ", uid)
-            # # confirm_link = f"https://smart-care.onrender.com/patient/active/{uid}/{token}"
-            # confirm_link = f"http://127.0.0.1:8000/account/active/{uid}/{token}"
-            # email_subject = "Confirm Your Email"
-            # email_body = render_to_string('confirmation_email.html', {'confirm_link' : confirm_link})
-            
-            # email = EmailMultiAlternatives(email_subject , '', to=[user.email])
-            # email.attach_alternative(email_body, "text/html")
-            # email.send()
-            # return Response("Check your mail for confirmation")
+            return Response("account set")
         return Response(serializer.errors)
 
-    
+class UserAddressCreateSerializer(APIView):
+    serializer_class = AddressSerializer
+    def post(self, request):
+        serializer = AddressSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("address set")
+        return Response(serializer.errors)
+
+
 
 
 #################### Authentication and Authorization works ###########
@@ -77,6 +98,7 @@ def activate(request, uid64, token):
     
 
 class UserLoginApiView(APIView):
+    serializer_class = UserLoginSerializer
     def post(self, request):
         serializer = UserLoginSerializer(data = self.request.data)
         if serializer.is_valid():
@@ -87,8 +109,8 @@ class UserLoginApiView(APIView):
             
             if user:
                 token, _ = Token.objects.get_or_create(user=user)
-                # print(token)
-                # print(_)
+                print(token)
+                print(_)
                 login(request, user)
                 return Response({'token' : token.key, 'user_id' : user.id})
             else:
@@ -105,8 +127,3 @@ class UserLogoutAPIView(APIView):
     
 
 
-def loginView(request):
-    return HttpResponse("Your account activation is successful and this is login page")
-
-def registerView(request):
-    return HttpResponse("This is  register page")

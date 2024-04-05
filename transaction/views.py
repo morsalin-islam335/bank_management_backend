@@ -26,4 +26,8 @@ def send_transaction_email(user, amount, subject, template):
 class TransactionViewSets(viewsets.ModelViewSet):
         serializer_class = TransactionSerializers
         queryset = Transaction.objects.all()
+
+        
+        def post(self, request):
+                pass
         

@@ -30,6 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+
 CSRF_TRUSTED_ORIGINS = ['https://trust-switch.onrender.com','https://*.127.0.0.1']
 
 
@@ -46,9 +50,11 @@ INSTALLED_APPS = [
     'transaction',
     'rest_framework',
      'rest_framework.authtoken',
+     "corsheaders",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

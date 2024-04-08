@@ -9,7 +9,7 @@ from . serializers import TransactionSerializers
 from rest_framework import viewsets
 
 from . models import Transaction
-
+from rest_framework.response import Response
 
 def send_transaction_email(user, amount, subject, template):
         message = render_to_string(template, {
@@ -29,5 +29,10 @@ class TransactionViewSets(viewsets.ModelViewSet):
 
         
         def post(self, request):
-                pass
-        
+                serializer = self.serializer_class(data = request.post)
+                if serializer.is_valid():
+                        serializer.save()
+                        return Response({"OK": "done"})
+
+                else:
+                    return serializer.errors()
